@@ -2,10 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Camera Web</title>
+    <title>Emitter video</title>
+    <script src = "https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-<p><a href="emitter.html">Camera Web</a> </p>
-<p><a href="visualizer.html">Visualizer</a> </p>
+<div id="cameraWrapper">
+    <canvas style="display: block" id="preview"></canvas>
+    <video src="" id="video" style="display:none;width: 640px ; height: 480px;" autoplay="true"></video>
+    <div id="numberPlate" style="display: none">NO NUMBER</div>
+</div>
+
+<div id="logger" style="display: none"></div>
+
+<script type="text/javascript">
+    var canvas = document.getElementById("preview");
+
+    var context = canvas.getContext("2d");
+
+    canvas.width=640;
+    canvas.height=480;
+    context.width=canvas.width;
+    context.height=canvas.height;
+
+    var video = document.getElementById("video");
+
+    var socket = io();
+
+    function logger (msg){
+        $('#logger').text(msg);
+    }
+
+    function loadCam(stream){
+        video.src = window.URL.createObjectURL(stream);
+        logger('camera loaded');
+
+    }
+
+    function loadFail(){
+        logger('camera fail');
+    }
+
+    function viewVideo(){
+        context.drawImage(video,0,0,context.width,context.height);
+        socket.emit('stream',canvas.toDataURL('image/png'));
+    }
+    $(function () {
+        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+        || navigator.msgGetUserMedia);
+
+        if(navigator.getUserMedia){
+            navigator.getUserMedia({video :true},loadCam,loadFail);
+        }
+
+        setInterval(function () {
+            viewVideo(video,context);
+        },100);
+    });
+
+
+    /*RECEIVER*/
+    var numberPlate = $("#numberPlate");
+    socket.connect().on('ProcessedData',function (data) {
+        console.log(data);
+        if(!!data.plate){
+            numberPlate.show();
+            numberPlate.text(data.plate);
+            numberPlate.css({
+                left:data.x,
+                top:data.y
+            });
+        }else {
+            numberPlate.hide();
+        }
+    });
+    /*RECEIVER*/
+</script>
 </body>
 </html>
