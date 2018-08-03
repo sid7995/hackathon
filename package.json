@@ -6,5 +6,8 @@
     "express": "*",
     "log": "*",
     "node-openalpr": "https://github.com/bameyrick/node-openalpr"
+  },
+  "scripts" : {
+    "start" : "nodemon ./app.js"
   }
 }
