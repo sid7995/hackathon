@@ -1,6 +1,6 @@
 # hackathon :exclamation: :boom: :fire:
 
-### run below commands to install in local machine
+### Installation
 
 ```sh
 $ git clone https://github.com/sid7995/hackathon.git
