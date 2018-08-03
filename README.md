@@ -1,11 +1,11 @@
-# hackathon
+# hackathon :exclamation: :boom: :fire:
 
-git clone https://github.com/sid7995/hackathon.git
+### run below commands to install in local machine
 
-Run brew tap brewsci/science
-
-Run brew install openalpr
-
-Run npm install
-
-Run nodemon app.js
+```sh
+$ git clone https://github.com/sid7995/hackathon.git
+$ brew tap brewsci/science
+$ brew install openalpr
+$ npm install
+$ npm start
+```
