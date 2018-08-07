@@ -1,5 +1,8 @@
 div#cameraWrapper{
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 }
 div#numberPlate{
     border: 2px solid pink;
@@ -9,4 +12,19 @@ div#numberPlate{
     font-family: "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
     color: azure;
     text-shadow: 2px 2px black;
+}
+
+div.canvas-parent {
+    border: 1px solid lightgreen;
+}
+
+div.near-by-dealers{
+    padding: 10px;
+    background-color: green;
+    display: block;
+    color: white;
+}
+
+div.dealers-container {
+
 }

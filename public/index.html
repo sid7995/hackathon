@@ -1,83 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Emitter video</title>
-    <script src = "https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" />
+    <script src="lib/bootstrap/js/bootstrap.bundle.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
+
 <body>
-<div id="cameraWrapper">
-    <canvas style="display: block" id="preview"></canvas>
-    <video src="" id="video" style="display:none;width: 640px ; height: 480px;" autoplay="true"></video>
-    <div id="numberPlate" style="display: none">NO NUMBER</div>
-</div>
+    <div id="cameraWrapper" class="container-fluid">
+        <div class="canvas-parent">
+        <canvas style="display: block" id="preview" ></canvas>
+        </div>
+        <div class="dealers-container">
+            <div class="near-by-dealers">Near by dealers</div>
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Collapsible Group Item #1
+                            </button>
+                        </h5>
+                    </div>
 
-<div id="logger" style="display: none"></div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Collapsible Group Item #2
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Collapsible Group Item #3
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <video src="" id="video" style="display:none;width: 640px ; height: 480px;" autoplay="true"></video>
+        <div id="numberPlate" style="display: none">NO NUMBER</div>
+    </div>
 
-<script type="text/javascript">
-    var canvas = document.getElementById("preview");
+    <div id="logger" style="display: none"></div>
 
-    var context = canvas.getContext("2d");
+    <script type="text/javascript">
+        var canvas = document.getElementById("preview");
 
-    canvas.width=640;
-    canvas.height=480;
-    context.width=canvas.width;
-    context.height=canvas.height;
+        var context = canvas.getContext("2d");
 
-    var video = document.getElementById("video");
+        canvas.width = 640;
+        canvas.height = 480;
+        context.width = canvas.width;
+        context.height = canvas.height;
 
-    var socket = io();
+        var video = document.getElementById("video");
 
-    function logger (msg){
-        $('#logger').text(msg);
-    }
+        var socket = io();
 
-    function loadCam(stream){
-        video.src = window.URL.createObjectURL(stream);
-        logger('camera loaded');
-
-    }
-
-    function loadFail(){
-        logger('camera fail');
-    }
-
-    function viewVideo(){
-        context.drawImage(video,0,0,context.width,context.height);
-        socket.emit('stream',canvas.toDataURL('image/png'));
-    }
-    $(function () {
-        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
-        || navigator.msgGetUserMedia);
-
-        if(navigator.getUserMedia){
-            navigator.getUserMedia({video :true},loadCam,loadFail);
+        function logger(msg) {
+            $('#logger').text(msg);
         }
 
-        setInterval(function () {
-            viewVideo(video,context);
-        },100);
-    });
+        function loadCam(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            logger('camera loaded');
 
-
-    /*RECEIVER*/
-    var numberPlate = $("#numberPlate");
-    socket.connect().on('ProcessedData',function (data) {
-        console.log(data);
-        if(!!data.plate){
-            numberPlate.show();
-            numberPlate.text(data.plate);
-            numberPlate.css({
-                left:data.x,
-                top:data.y
-            });
-        }else {
-            numberPlate.hide();
         }
-    });
+
+        function loadFail() {
+            logger('camera fail');
+        }
+
+        function viewVideo() {
+            context.drawImage(video, 0, 0, context.width, context.height);
+            socket.emit('stream', canvas.toDataURL('image/png'));
+        }
+        $(function () {
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+                || navigator.msgGetUserMedia);
+
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({ video: true }, loadCam, loadFail);
+            }
+
+            setInterval(function () {
+                viewVideo(video, context);
+            }, 100);
+        });
+
+
+        /*RECEIVER*/
+        var numberPlate = $("#numberPlate");
+        socket.connect().on('ProcessedData', function (data) {
+            console.log(data);
+            if (!!data.plate) {
+                numberPlate.show();
+                numberPlate.text(data.plate);
+                numberPlate.css({
+                    left: data.x,
+                    top: data.y
+                });
+            } else {
+                numberPlate.hide();
+            }
+        });
     /*RECEIVER*/
-</script>
+    </script>
 </body>
+
 </html>

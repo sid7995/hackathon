@@ -2,12 +2,13 @@
   "name": "Wcam-live",
   "version": "0.0.1",
   "dependencies": {
-    "socket.io": "*",
     "express": "*",
     "log": "*",
-    "node-openalpr": "https://github.com/bameyrick/node-openalpr"
+    "node-inspector": "^1.1.2",
+    "node-openalpr": "https://github.com/bameyrick/node-openalpr",
+    "socket.io": "*"
   },
-  "scripts" : {
-    "start" : "nodemon ./app.js"
+  "scripts": {
+    "start": "nodemon ./app.js"
   }
 }
