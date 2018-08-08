@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="map.css" rel="stylesheet">
+    <script src="http://maps.google.com/maps/api/js?key=AIzaSyCKBF1qDRx5mCW-w63yThHN3bqGQ1z5I-0"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gmap3/7.2.0/gmap3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" />
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+
+<body>
+<div class="map"></div>
+
+<div id="dealer" style="display: none" class="col-sm-12">
+    <h1 class="title" style="text-align: center"></h1>
+    <div>
+    <button class="btn">Reviews</button>
+    <button class="btn">Offers</button>
+    <button class="btn" onclick="onDirectionClick(destination)">Directions</button>
+    </div>
+</div>
+
+<div id="box" style="display: none;text-align: center">Directions</div>
+<script>
+
+    var currentLocation=[39.757,  -75.569];
+    var destination = [];
+    function whatIselected(selectedData){
+        $(".title").text(selectedData.title);
+        $("#dealer").show("slow");
+            //.addClass('sideheader');
+        //$('.map').addClass('slideright');
+        destination = selectedData.position;
+    }
+
+    function onDirectionClick(destination){
+        console.log("Directions button clicked.. ");
+        $("#box").show("slow");
+        $('.map').gmap3({
+            center:currentLocation,
+            zoom:4
+        }).route({
+            origin:currentLocation,
+            destination:destination,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        }).directionsrenderer(function (results) {
+                if (results) {
+                    return {
+                        panel: "#box",
+                        directions: results
+                    }
+                }
+            });
+    }
+
+    $('.map')
+        .gmap3({
+            center:currentLocation,
+            zoom:4
+        })
+        .marker([
+            {position:currentLocation, icon: "http://maps.google.com/mapfiles/marker_green.png",title: "You are here."},
+            {position:[40.5985676,  -75.3431932],title:"Dealer1"},
+            {position:[ 32.927,  -97.092],title:"Dealer3"},
+            {position:[ 42.458607,   -82.96135],title:"Dealer4"},
+            {position:[ 30.075598,  -90.508722],title:"Dealer5"},
+            {position:[32.798229,  -96.684755],title:"Dealer2"}
+        ])
+        .fit()
+        .infowindow({
+            content: ""
+        })
+        .then(function (infowindow) {
+
+            var map = this.get(0);
+            var marker = this.get(1);
+            for (let i = 0; i < marker.length; i++) {
+                google.maps.event.addListener(marker[i], 'click', function() {
+                    console.log(i)
+                    infowindow.setContent(marker[i].title);
+                    infowindow.open(map, this);
+                    if(i!=0){
+                        whatIselected(marker[i])
+                    }
+
+                });
+            }
+
+        });
+</script>
+
+</body>
+</html>
