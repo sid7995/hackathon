@@ -1,0 +1,20 @@
+div#cameraWrapper{
+    position: relative;
+    height: 480px;
+    width: 640px;
+}
+div#numberPlate{
+    border: 2px solid pink;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
+    color: azure;
+    text-shadow: 2px 2px black;
+}
+md-checkbox .md-icon {
+   visibility: hidden;
+}
+tr.md-row{
+    cursor: pointer;
+}

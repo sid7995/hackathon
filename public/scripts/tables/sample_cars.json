@@ -1,0 +1,16 @@
+{
+  "count": 1,
+  "data": [
+    {
+      "logo" : "chevrolet_thumb.png",
+      "plate":"CRZNUSA",
+      "vehicleRecognized": true,
+      "confidence": 92.8623046875,
+      "color": "black",
+      "make": "chevrolet",
+      "model": "chevrolet_cruze",
+      "body_type": "sedan-standard",
+      "year": "2005-2009"
+    }
+  ]
+}
