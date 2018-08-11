@@ -1,0 +1,239 @@
+<div class="page page-dashboard" layout-gt-sm="column" ng-controller="DashboardCtrl">
+
+    <div flex class="today-stats">
+        <h3 class="md-caption" layout-margin>Today's Stats</h3>
+
+        <div layout-gt-sm="row">
+            <div flex-gt-sm="33" class="stats-wrapper">
+                <div class="stats">
+                    <div class="val">3.1K</div>
+                    <div class="md-caption text-uppercase">Page Views</div>
+                </div>
+                <span class="chart-trends" sparkline type="line" width="8em" height="2em" fill-color="transparent" line-color="#388E3C">3,4,2,3,4,1,4,2</span>
+            </div>
+
+            <div flex-gt-sm="33" class="stats-wrapper">
+                <div class="stats">
+                    <div class="val">288</div>
+                    <div class="md-caption text-uppercase">Downloads</div>
+                </div>
+                <span class="chart-trends" sparkline type="line" width="8em" height="2em" fill-color="transparent" line-color="#388E3C">3,4,2,3,4,4,6,2</span>
+            </div>
+
+            <div flex-gt-sm="33" class="stats-wrapper">
+                <div class="stats">
+                    <div class="val">$189</div>
+                    <div class="md-caption text-uppercase">Earnings</div>
+                </div>
+                <span class="chart-trends" sparkline type="line" width="8em" height="2em" fill-color="transparent" line-color="#388E3C">3,4,2,3,4,5,4,5</span>
+            </div>
+        </div>
+    </div>
+
+    <div layout-gt-sm="row">
+        <md-card flex-gt-sm="50">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="sm-subhead text-uppercase text-bold">CAMERA <md-icon class="ion-ios-radio-button-on first material-icons " aria-hidden="true" style="font-size: 16px;color:red;animation-name: flashing;
+    animation-duration: 1s;animation-iteration-count: infinite;"></md-icon></span>
+                    <!-- <md-divider></md-divider> -->
+
+                </md-card-title-text>
+            </md-card-title>
+
+            <md-card-content style="text-align: center;">
+            	<!--<c3-chart id="c3chartbrowsershare" config="browserconfig"></c3-chart>-->
+                <!-- DO NOT MODIFY cameraWrapper USE WHOLE DIV AND PLACE WHERE EVER YOU WANT-->
+                <div id="cameraWrapper">
+                    <canvas style="display: block" id="preview"></canvas>
+                    <video src="" id="video" style="display:none;width: 640px ; height: 480px;" autoplay="true"></video>
+                    <svg height="480" width="640" style="position: absolute;top: 0;left: 0;">
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        <polygon class="numberPlateFill" points="0,0 0,0 0,0 0,0" fill="rgba(255,255,255,0.6)" stroke-width="2" stroke="rgb(255,255,255)"></polygon>
+                        Sorry, your browser does not support inline SVG.
+                    </svg>
+                </div>
+                <!-- END-->
+
+
+            </md-card-content>
+        </md-card>
+
+        <md-card flex-gt-sm="50">
+            <md-card-content>
+                <!--<c3-chart id="c3chartweeklygrowth" config="weeklygrowthconfig"></c3-chart>-->
+                <!--<div id="recVehicals">NO DATA</div>-->
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="sm-subhead text-uppercase text-bold">CARS DETAILS</span>
+                        <!-- <md-divider></md-divider> -->
+                    </md-card-title-text>
+                </md-card-title>
+                <md-table-container>
+                    <table md-table md-row-select='options.rowSelection' multiple="{{options.multiSelect}}" ng-model="selected" md-progress="promise">
+                        <thead ng-if="!options.decapitate" md-head md-order="query.order" md-or-reorder="onReorder">
+                        <tr md-row>
+                            <th md-column> </th>
+                            <th md-column hide md:order-by="plate"><span>Plate</span></th>
+                            <th md-column md:order-by="make" md-desc><span>Make</span></th>
+                            <th md-column md:order-by="model"><span>Model</span></th>
+                            <th md-column md:order-by="color"><span>Color</span></th>
+                        </tr>
+                        </thead>
+                        <tbody md-body>
+                        <tr md-row md-select="car" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" md-auto-select="options.autoSelect" data-ng-repeat="car in cars | filter: filter.search | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
+                            <td md-cell><img height="18px" ng-src="images/{{car.logo}}"></td>
+                            <td md-cell hide>{{car.plate}}</td>
+                            <td md-cell>{{car.make}}</td>
+                            <td md-cell>{{car.model}}</td>
+                            <td md-cell >{{car.color}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+            </md-card-content>
+        </md-card>
+    </div>
+
+
+    <div layout-gt-sm="row" id="map-review-offers-section" >
+
+
+        <md-card flex-gt-sm="60">
+            <!--<md-card-title>-->
+                <!--<md-card-title-text>-->
+                    <!--<span class="md-subhead text-uppercase text-bold">MAP</span>-->
+                <!--</md-card-title-text>-->
+            <!--</md-card-title>-->
+
+            <md-card-content>
+                <!--<c3-chart id="c3visitorsage" config="visitorsageconfig"></c3-chart>-->
+                <div id="dealers-map" style=" display: block;width: 100%;height: 600px; opacity: 0"></div>
+            </md-card-content>
+
+        </md-card>
+
+        <md-card flex-gt-sm="40">
+            <!--<md-card-title>-->
+                <!--<md-card-title-text>-->
+                    <!--<span class="md-subhead text-uppercase text-bold">DIRECTION</span>-->
+                    <!--&lt;!&ndash; <md-divider></md-divider> &ndash;&gt;-->
+                <!--</md-card-title-text>-->
+            <!--</md-card-title>-->
+
+            <md-card-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+
+                    <md-tab label="DIRECTION">
+                        <md-content class="md-padding">
+                            <p><div id="directionBox" style="height: 491px;overflow-y: scroll;">
+                            CLICK ON ANY MARKER FOR LOADING DIRECTIONS
+                        </div></p>
+                        </md-content>
+                    </md-tab>
+
+                    <md-tab label="OFFERS">
+                        <md-content class="md-padding">
+                            <!--<iframe id="offersFrame" src="/offers/diverchev/chevrolet" style="display:none;width:100%;height: 422px;border: 0;"></iframe>-->
+                        </md-content>
+                    </md-tab>
+
+                    <md-tab label="REVIEWS">
+                        <md-content class="md-padding">
+                            <!--<iframe id="reviewsFrame" src="https://www.diverchev.com/Reviews?make=Chevrolet" style="display:none;width:100%;height: 422px;border: 0;"></iframe>-->
+                        </md-content>
+                    </md-tab>
+
+                </md-tabs>
+            </md-card-content>
+
+        </md-card>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!---->
+    <!--<div layout-gt-sm="row">-->
+        <!--<md-card flex-gt-sm="100">-->
+            <!--<md-card-title>-->
+                <!--<md-card-title-text>-->
+                    <!--<span class="md-subhead text-uppercase text-bold">Project Stats</span>-->
+                    <!--&lt;!&ndash; <md-divider></md-divider> &ndash;&gt;-->
+                <!--</md-card-title-text>-->
+            <!--</md-card-title>-->
+
+            <!--<md-card-content>-->
+                <!--<md-table-container>-->
+                    <!--<table md-table>-->
+                        <!--<thead md-head>-->
+                            <!--<tr md-row>-->
+                                <!--<th md-column class="text-uppercase">Id</th>-->
+                                <!--<th md-column class="text-uppercase">Project</th>-->
+                                <!--<th md-column class="text-uppercase">Fees</th>-->
+                                <!--<th md-column class="text-uppercase">Status</th>-->
+                                <!--<th md-column class="text-uppercase">Date</th>-->
+                            <!--</tr>-->
+                        <!--</thead>-->
+                        <!--<tbody md-body>-->
+                            <!--<tr md-row>-->
+                                <!--<td md-cell>220</td>-->
+                                <!--<td md-cell>Convert to Sass</td>-->
+                                <!--<td md-cell>$340</td>-->
+                                <!--<td md-cell><md-progress-circular md-mode="determinate" value="60" class="md-warn" md-diameter="25"></md-progress-circular></td>-->
+                                <!--<td md-cell>10<sup>th</sup> Dec 2016</td>-->
+                            <!--</tr>-->
+                            <!--<tr md-row>-->
+                                <!--<td md-cell>101</td>-->
+                                <!--<td md-cell>Designing wordpress theme</td>-->
+                                <!--<td md-cell>$1340</td>-->
+                                <!--<td md-cell><md-progress-circular md-mode="determinate" class="md-accent" value="80"  md-diameter="25"></md-progress-circular></td>-->
+                                <!--<td md-cell>20<sup>th</sup> Dec 2016</td>-->
+                            <!--</tr>-->
+                            <!--<tr md-row>-->
+                                <!--<td md-cell>310</td>-->
+                                <!--<td md-cell>Adding animations to template</td>-->
+                                <!--<td md-cell>$120</td>-->
+                                <!--<td md-cell><md-progress-circular md-mode="determinate" value="90" md-diameter="25"></md-progress-circular></td>-->
+                                <!--<td md-cell>2<sup>nd</sup> Dec 2016</td>-->
+                            <!--</tr>-->
+                            <!--<tr md-row>-->
+                                <!--<td md-cell>405</td>-->
+                                <!--<td md-cell>Lorem ipsum dolar sit amet</td>-->
+                                <!--<td md-cell>$310</td>-->
+                                <!--<td md-cell><md-progress-circular md-mode="determinate" value="50" class="md-warn" md-diameter="25"></md-progress-circular></td>-->
+                                <!--<td md-cell>29<sup>th</sup> Nov 2016</td>-->
+                            <!--</tr>-->
+                            <!--<tr md-row>-->
+                                <!--<td md-cell>445</td>-->
+                                <!--<td md-cell>Building admin template</td>-->
+                                <!--<td md-cell>$890</td>-->
+                                <!--<td md-cell><md-progress-circular md-mode="determinate" value="30" class="md-warn md-hue-2" md-diameter="30"></md-progress-circular></td>-->
+                                <!--<td md-cell>1<sup>st</sup> Jan 2017</td>-->
+                            <!--</tr>-->
+                        <!--</tbody>-->
+                    <!--</table>-->
+
+                <!--</md-table-container>-->
+            <!--</md-card-content>-->
+
+        <!--</md-card>-->
+
+    <!--</div>-->
+
+
+
+</div>
