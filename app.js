@@ -110,7 +110,7 @@ io.on('connection',function (socket) {
                         latestCameraBase64Data.base64 = base64Data;
 
                         if(!!numberPlatesLocalData[res.results[i].plate]){
-                            console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT");
+                            //console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT");
                             socket.emit('gotVehical',numberPlatesLocalData[res.results[i].plate]);
                         }
                     }
@@ -130,7 +130,7 @@ io.on('connection',function (socket) {
         if(isCarInCamera){
 
             if(!!numberPlatesLocalData[latestCameraBase64Data.plate]){
-                console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT INTERVAL");
+                //console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT INTERVAL");
                 socket.emit('gotVehical',numberPlatesLocalData[latestCameraBase64Data.plate]);
             }else {
                 recognizeVehicalDetailsAndSendToClient(latestCameraBase64Data);
@@ -148,15 +148,15 @@ io.on('connection',function (socket) {
                 return console.log(err);
             }
             var cmd = `curl -X POST -F image=@${recFileName} 'https://api.openalpr.com/v2/recognize?recognize_vehicle=1&country=us&secret_key=${options.api_key}'`;
-            console.log("CALLING CLOUD ALPR API FOR CAR DETAILS");
-            console.log(cmd);
+            //console.log("CALLING CLOUD ALPR API FOR CAR DETAILS");
+            //console.log(cmd);
             exec(cmd, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
                     return;
                 }
                 var results = JSON.parse(stdout).results;
-                console.log(results);
+                //console.log(results);
                 if(!!results && results.length > 0){
                     for(let i = 0;i< results.length;i++){
                         if (results[i].confidence >= options.confidence) {
@@ -172,7 +172,7 @@ io.on('connection',function (socket) {
                                 numberPlatesLocalData[results[i].plate].body_type = results[i].vehicle.body_type[0].name;
                                 numberPlatesLocalData[results[i].plate].year = results[i].vehicle.year[0].name;
                             }else {
-                                console.log("SENDING MAKE MODEL TO CLIENT");
+                                //console.log("SENDING MAKE MODEL TO CLIENT");
                             }
                             socket.emit('gotVehical',numberPlatesLocalData[results[i].plate]);
                             /*WRITE LOCAL DB.JSON FILE*/
