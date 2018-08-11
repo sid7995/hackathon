@@ -10,7 +10,9 @@ var Log = require('log'),
     log = new Log('debug');
 var port = process.env.PORT || 3001;
 var numberPlatesLocalData = {};
-var numberPlatesLocalDataClient = {};
+//var numberPlatesLocalDataClient = {};
+var isCarInCamera = false;
+var latestCameraBase64Data = {plate:"",base64:""}; //hold latest camera image
 const options ={
     confidence:80,
     api_key:"sk_DEMODEMODEMODEMODEMODEMO"
@@ -21,12 +23,10 @@ const { exec } = require('child_process');
 fs.readFile('DB.json', 'utf8', function(err, data) {
     if(err) {
         numberPlatesLocalData = {};
-        numberPlatesLocalDataClient = {};
         return;
     }
     data  = (data == "") ? "{}" : data;
     numberPlatesLocalData = JSON.parse(data);
-    numberPlatesLocalDataClient = JSON.parse(data);
 });
 /*END*/
 
@@ -84,8 +84,8 @@ io.on('connection',function (socket) {
     /*UTILS ENDS*/
 
 /*FUNCTIONS*/
-    function writeImageFile(id,data){
-        var path = __dirname + "/public/hack18/temp/" + id + ".png";
+    function writeImageFile(tempImageName,data){
+        var path = __dirname + "/public/hack18/temp/" + tempImageName + ".png";
         var base64Data = data.replace(/^data:image\/png;base64,/, "");
         fs.writeFile(path, base64Data, 'base64', function(err) {
             if(err) {
@@ -96,160 +96,113 @@ io.on('connection',function (socket) {
     }
 
 
+
     function identify (path,base64Data) {
         openalpr.IdentifyLicense (path, function (error, output) {
             var res={};
             var results = output.results;
             if(!!results && results.length > 0 ){
+                isCarInCamera = true; //If result is not 0 it means some car is in camera
                 res.results = results;
-                //res.numberPlatesLocalDataClient = filterOBJ(numberPlatesLocalDataClient , numberPlate => numberPlate.color);
-                res.numberPlatesLocalDataClient = filterOBJ(numberPlatesLocalDataClient , numberPlate => numberPlate.color);
-                //FILL DATA IN LOCAL OBJECT
                 for(let i = 0;i< res.results.length;i++){
-                   // addRecognizeVehicle(base64Data,res.results[i]); //TODO uncomment it for fetching from server STOPPING FOR MOCK DATA
+                    if(!!res.results[i] && res.results[i].confidence >= options.confidence ) {
+                        latestCameraBase64Data.plate = res.results[i].plate;
+                        latestCameraBase64Data.base64 = base64Data;
+
+                        if(!!numberPlatesLocalData[res.results[i].plate]){
+                            console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT");
+                            socket.emit('gotVehical',numberPlatesLocalData[res.results[i].plate]);
+                        }
+                    }
                 }
 
-               // console.log("SENDING PROCESSED DATA TO CLIENT");
-               // socket.emit('ProcessedData',res);
+
+            }else {
+                isCarInCamera = false;
             }
-            socket.emit('ProcessedData',res);
+            socket.emit('NumberPlateData',res);
         });
     }
 
 
-    function addRecognizeVehicle(base64Data,data){
-        if(!!data && !numberPlatesLocalData[data.plate] && data.confidence >= options.confidence ){
-            numberPlatesLocalData[data.plate] = {};
-            //numberPlatesLocalData[data.plate].plate = data.plate;
-            numberPlatesLocalData[data.plate].base64Data = base64Data;
-            numberPlatesLocalData[data.plate].vehicleRecognized = false;
-            numberPlatesLocalData[data.plate].confidence = data.confidence;
+    setInterval(function(){
+        //console.log("isCarInCamera",isCarInCamera);
+        if(isCarInCamera){
 
-            /*FOR CLIENT*/
-            numberPlatesLocalDataClient[data.plate] = {};
-            //numberPlatesLocalDataClient[data.plate].plate = data.plate;
-            numberPlatesLocalDataClient[data.plate].confidence = data.confidence;
-            numberPlatesLocalDataClient[data.plate].vehicleRecognized = false;
-            /*FOR CLIENT END*/
-
-            recognizeVehicalDetails();
-        }else if(!!numberPlatesLocalData[data.plate] && !numberPlatesLocalData[data.plate].vehicleRecognized){
-            recognizeVehicalDetails();
-        }
-    }
-
-
-    function recognizeVehicalDetails(){
-        for (var numberPlate in numberPlatesLocalData) {
-            if (numberPlatesLocalData.hasOwnProperty(numberPlate) && !numberPlatesLocalData[numberPlate].vehicleRecognized) {
-
-                console.log(numberPlatesLocalData[numberPlate].vehicleRecognized);
-
-                numberPlatesLocalData[numberPlate].vehicleRecognized = true;
-
-                console.log(numberPlatesLocalData[numberPlate].vehicleRecognized);
-
-                var recFileName = __dirname + "/public/hack18/recordedImages/" + numberPlate + ".png";
-                fs.writeFile(recFileName,  numberPlatesLocalData[numberPlate].base64Data, 'base64', function(err) {
-                    console.log("WRITING FILE WITH NUMBER PLATE "+numberPlate);
-                    if(err) {
-                        numberPlatesLocalData[numberPlate].vehicleRecognized = false;
-                        return console.log(err);
-                    }
-
-
-
-                    console.log("GETTING MAKE MODEL FOR"+numberPlate);
-                    var cmd = `curl -X POST -F image=@${recFileName} 'https://api.openalpr.com/v2/recognize?recognize_vehicle=1&country=us&secret_key=${options.api_key}'`;
-                    console.log(cmd);
-                    exec(cmd, (error, stdout, stderr) => {
-                        if (error) {
-                            console.error(`exec error: ${error}`);
-                            return;
-                        }
-                        var results = JSON.parse(stdout).results;
-                        //console.log(results);
-                        if(!!results && results.length > 0){
-                            for(let i = 0;i< results.length;i++){
-                                //if(!numberPlatesLocalData[results[i].plate]) {
-                                if (results[i].confidence >= options.confidence) {
-
-                                    //IF NUMBER PLATE NOT MATCHING DELETE IT
-                                    if(numberPlate !== results[i].plate){
-                                        delete numberPlatesLocalData.numberPlate;
-                                    }
-
-                                    if(!numberPlatesLocalData[results[i].plate]){
-                                        //CREATE PLATE IF NOT EXISTS
-                                        numberPlatesLocalData[results[i].plate]={};
-                                        numberPlatesLocalDataClient[results[i].plate]={};
-                                    }
-
-                                    numberPlatesLocalData[results[i].plate].vehicleRecognized = true;
-                                    numberPlatesLocalData[results[i].plate].confidence = results[i].confidence;
-                                    numberPlatesLocalData[results[i].plate].color = results[i].vehicle.color[0].name;
-                                    numberPlatesLocalData[results[i].plate].make = results[i].vehicle.make[0].name;
-                                    numberPlatesLocalData[results[i].plate].model = results[i].vehicle.make_model[0].name;
-                                    numberPlatesLocalData[results[i].plate].body_type = results[i].vehicle.body_type[0].name;
-                                    numberPlatesLocalData[results[i].plate].year = results[i].vehicle.year[0].name;
-                                    delete numberPlatesLocalData[results[i].plate].base64Data;
-
-
-                                    /*FOR CLIENT*/
-                                    numberPlatesLocalDataClient[results[i].plate].vehicleRecognized = true;
-                                    numberPlatesLocalDataClient[results[i].plate].confidence = results[i].confidence;
-                                    numberPlatesLocalDataClient[results[i].plate].color = results[i].vehicle.color[0].name;
-                                    numberPlatesLocalDataClient[results[i].plate].make = results[i].vehicle.make[0].name;
-                                    numberPlatesLocalDataClient[results[i].plate].model = results[i].vehicle.make_model[0].name;
-                                    numberPlatesLocalDataClient[results[i].plate].body_type = results[i].vehicle.body_type[0].name;
-                                    numberPlatesLocalDataClient[results[i].plate].year = results[i].vehicle.year[0].name;
-                                    /*FOR CLIENT END*/
-
-                                    /*WRITE LOCAL DB.JSON FILE*/
-                                    fs.writeFile('DB.json', JSON.stringify(numberPlatesLocalDataClient), 'utf8', function (err) {
-                                        if (err) {
-                                            console.info(err);
-                                            return;
-                                        }
-                                    });
-                                    /*END*/
-
-                                    setTimeout(function () {
-                                        console.log("SENDING MAKE MODEL TO CLIENT");
-
-                                        //var numberPlatesLocalDataClientFiltered = filterObject(numberPlatesLocalDataClient,numberPlateC => !numberPlateC.falseData);
-                                        var numberPlatesLocalDataClientFiltered = filterOBJ(numberPlatesLocalDataClient , numberPlate => numberPlate.color)
-                                        socket.emit('gotUpdatedVehicals',numberPlatesLocalDataClientFiltered);
-
-                                    },500)
-
-                                } else {
-                                    //numberPlatesLocalData[numberPlate].vehicleRecognized = false;
-                                    //numberPlatesLocalDataClient[numberPlate].vehicleRecognized = false;
-                                    numberPlatesLocalData[numberPlate].vehicleRecognized = true;
-                                    numberPlatesLocalDataClient[numberPlate].falseData = true;
-                                }
-                                //}
-                            }
-                        }else {
-                            console.log(numberPlate);
-                            numberPlatesLocalData[numberPlate].vehicleRecognized = true;
-                            numberPlatesLocalDataClient[numberPlate].falseData = true;
-                        }
-                    });
-
-                });
+            if(!!numberPlatesLocalData[latestCameraBase64Data.plate]){
+                console.log(" WITHOUT CALLING SERVER SENDING MAKE MODEL TO CLIENT INTERVAL");
+                socket.emit('gotVehical',numberPlatesLocalData[latestCameraBase64Data.plate]);
+            }else {
+                recognizeVehicalDetailsAndSendToClient(latestCameraBase64Data);
             }
         }
+    }, 5000);
+
+
+    function recognizeVehicalDetailsAndSendToClient(data){
+
+        var recFileName = __dirname + "/public/hack18/recordedImages/" + data.plate + ".png";
+
+        fs.writeFile(recFileName,  data.base64, 'base64', function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            var cmd = `curl -X POST -F image=@${recFileName} 'https://api.openalpr.com/v2/recognize?recognize_vehicle=1&country=us&secret_key=${options.api_key}'`;
+            console.log("CALLING CLOUD ALPR API FOR CAR DETAILS");
+            console.log(cmd);
+            exec(cmd, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                var results = JSON.parse(stdout).results;
+                console.log(results);
+                if(!!results && results.length > 0){
+                    for(let i = 0;i< results.length;i++){
+                        if (results[i].confidence >= options.confidence) {
+                            //CREATE PLATE IF NOT EXISTS
+                            if(!numberPlatesLocalData[results[i].plate]){
+                                numberPlatesLocalData[results[i].plate]={};
+                                numberPlatesLocalData[results[i].plate].plate = results[i].plate;
+                                numberPlatesLocalData[results[i].plate].logo = `${results[i].vehicle.make[0].name.toLowerCase()}_thumb.png`,
+                                numberPlatesLocalData[results[i].plate].confidence = results[i].confidence;
+                                numberPlatesLocalData[results[i].plate].color = results[i].vehicle.color[0].name;
+                                numberPlatesLocalData[results[i].plate].make = results[i].vehicle.make[0].name;
+                                numberPlatesLocalData[results[i].plate].model = results[i].vehicle.make_model[0].name;
+                                numberPlatesLocalData[results[i].plate].body_type = results[i].vehicle.body_type[0].name;
+                                numberPlatesLocalData[results[i].plate].year = results[i].vehicle.year[0].name;
+                            }else {
+                                console.log("SENDING MAKE MODEL TO CLIENT");
+                            }
+                            socket.emit('gotVehical',numberPlatesLocalData[results[i].plate]);
+                            /*WRITE LOCAL DB.JSON FILE*/
+                            fs.writeFile('DB.json', JSON.stringify(numberPlatesLocalData), 'utf8', function (err) {
+                                if (err) {
+                                    console.info(err);
+                                    return;
+                                }
+                            });
+                            /*END*/
+
+                        }
+                    }
+                }
+            });
+
+        });
     }
     /*FUNCTIONS ENDS*/
 
     /*INIT*/
-    openalpr.Start(null, null, 1, true,"us");
+    openalpr.Start(null, null, 10, true,"us");//config, runtime, count, start_queue, region
     openalpr.GetVersion ();
 
+    var tempImageName;
     socket.on('stream',function (image) {
-        writeImageFile(socket.id,image)
+        if(!tempImageName){
+            tempImageName = socket.id;
+        }
+        writeImageFile(tempImageName,image)
     });
 
     /*INIT END*/

@@ -3,7 +3,7 @@
 
     angular.module('app.ctrls', [])
 
-    .controller('AppCtrl', ['$scope', '$mdSidenav', '$mdDialog','$anchorScroll', function($scope, $mdSidenav, $mdDialog,$anchorScroll) {
+    .controller('AppCtrl', ['$scope', '$mdSidenav', '$mdDialog', function($scope, $mdSidenav, $mdDialog) {
 
         // Open search btn
         $scope.openSearch = function() {
@@ -25,7 +25,7 @@
     }])
 
 
-    .controller('DashboardCtrl', ['$scope','$http','$anchorScroll','$location', function($scope,$http,$anchorScroll,$location) {
+    .controller('DashboardCtrl', ['$scope', function($scope) {
 
         // === HACK18
 
@@ -54,10 +54,6 @@
             {name: 'Iron', numeric: true, orderBy: 'iron.value'}
         ];
 
-        /*$http.get('scripts/tables/sample_cars.json').then(function(desserts) {
-            $scope.desserts = desserts.data;
-        });*/
-
         $scope.toggleLimitOptions = function () {
             $scope.limitOptions = $scope.limitOptions ? undefined : [5, 10, 15];
         };
@@ -78,8 +74,11 @@
 
 
         var gotoMapSection = function() {
-            $location.hash('map-review-offers-section');
-            $anchorScroll();
+            $('.main-content').animate({
+                scrollTop: $("#map-review-offers-section").offset().top
+            }, 500);
+
+
         };
 
         $scope.log =function(data){
@@ -88,65 +87,22 @@
             $('#dealers-map').css("opacity",1);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//ORIGINAL CODE
-      /*  var objCars = {"CRZNUSA": {
-            "vehicleRecognized": true,
-                "confidence": 92.8623046875,
-                "color": "silver-gray",
-                "make": "chevrolet",
-                "model": "chevrolet_captiva",
-                "body_type": "sedan-standard",
-                "year": "2005-2009"
-        }};
-
-        var carNumbers = Object.keys(objCars);
-
-        var cars =[];
-        for(let i=0;i<=carNumbers.length;i++){
-            if(!!(objCars[carNumbers[i]] && objCars[carNumbers[i]].make)){
-                objCars[carNumbers[i]].plate = carNumbers[i];
-                objCars[carNumbers[i]].logo = `${objCars[carNumbers[i]].make.toLowerCase()}_thumb.png`;
-                cars.push(objCars[carNumbers[i]]);
-                //$scope.desserts = objCars[carNumbers[i];
-            }
-        }
-        //$scope.cars*/
-//ORIGINAL CODE
         $scope.cars =[];
-
-
-        /*MOCK*/
         var isNotCalled = true;
-        socket.on('ProcessedData',function(data){
-            if(isNotCalled && Object.keys(data).length){
+        socket.on('gotVehical',function (res) {
+            console.log(res);
+          if(isNotCalled){
                 isNotCalled =false;
-                $http.get('scripts/tables/sample_cars.json').then(function(cars) {
-                    $scope.cars = cars.data.data;
-                    $scope.$apply();
-                });
+                  var found = $scope.cars.find(function(element) {
+                      return element.plate === res.plate;
+                  });
+                  if(!found){
+                      console.log("SCOPE UPDATED");
+                      $scope.cars.push(res);
+                      $scope.$apply();
+                  }
+              isNotCalled = true;
             }
         });
-
-
     }])
-
-
 })();

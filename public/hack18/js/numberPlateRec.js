@@ -8,7 +8,6 @@ canvas.height=480;
 context.width=canvas.width;
 context.height=canvas.height;
 var video = document.getElementById("video");
-//var socket = io();
 /*VARIABLES END*/
 
 
@@ -55,10 +54,10 @@ $(function () {
 /*ACTIONS ENDS*/
 
 /*RECEIVER*/
-socket.connect().on('ProcessedData',function (res) {
-    if(res.numberPlatesLocalDataClient){
+socket.on('NumberPlateData',function (res) {
+    /*if(res.numberPlatesLocalDataClient){
         $("#recVehicals").html(JSON.stringify(res.numberPlatesLocalDataClient));
-    }
+    }*/
 
     if(!$.isEmptyObject(res.results)){
         for(let i = 0;i< res.results.length;i++){
@@ -69,7 +68,7 @@ socket.connect().on('ProcessedData',function (res) {
     }
 });
 
-socket.connect().on('gotUpdatedVehicals',function (res) {
+socket.on('gotUpdatedVehicals',function (res) {
     $("#recVehicals").html(JSON.stringify(res));
 });
 
