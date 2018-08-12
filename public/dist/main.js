@@ -297,20 +297,9 @@
             }, 2000);
         };
 
-
-
-        var gotoMapSection = function() {
-            $('.main-content').animate({
-                scrollTop: $("#map-review-offers-section").offset().top
-            }, 500);
-
-
-        };
-
-        $scope.log =function(data){
-            console.log(data);
-            gotoMapSection();
-            $('#dealers-map').css("opacity",1);
+        //ON CLICK TABLE ROW
+        $scope.log = function(data){
+            socket.emit("setMapData",data);
         }
 
         $scope.cars =[];

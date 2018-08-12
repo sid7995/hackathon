@@ -1,0 +1,49 @@
+{
+	"data":[{
+		"dealerName":"Diver Chevrolet",
+		"make":"Chevrolet",
+		"model":"Cruze",
+		"latitude": 39.757,
+    	"longitude": -75.569,
+		"reviewUrl":"https://www.diverchev.com/Reviews?SelectedFilters=MAKE%3DChevrolet%2CMODEL%3DCruze",
+		"offerUrl":"https://www.diverchev.com/Specials?make=chevrolet&model=cruze"
+		
+	},
+	{	"dealerName":"young chevrolet",
+		"make":"Chevrolet",
+		"model":"Cruze",
+		"latitude": 32.798229,
+    "longitude": -96.684755,
+		"reviewUrl":"https://www.youngchevrolet.com/Reviews?SelectedFilters=MAKE%3DChevrolet%2CMODEL%3DCruze",
+		"offerUrl":"https://www.youngchevrolet.com/Specials?make=Chevrolet"
+	},
+	{	
+		"dealerName":"Chevy 21",
+			"make":"Chevrolet",
+	"model":"Cruze",
+	"latitude": 40.5985676,
+    "longitude": -75.3431932,
+		"reviewUrl":"http://www.chevy21.com/Reviews?SelectedFilters=MAKE=Chevrolet,MODEL=Cruze",
+		"offerUrl":"https://www.Chevy21.com/Specials?make=Chevrolet"
+	},
+	{	
+		"dealerName":"Denil Chevrolet",
+		"make":"Chevrolet",
+	"model":"Cruze",
+	"latitude":44.54,
+	"longitude":88.07,
+		"reviewUrl":"https://www.bergstromgreenbay.com/Reviews?SelectedFilters=MAKE=Chevrolet,MODEL=Cruze",
+		"offerUrl":"https://www.Chevy21.com/Specials?make=Chevrolet"
+	},
+	{	
+		"dealerName":"Classic Chevrolet",
+      "make":"Chevrolet",
+		"model":"Cruze",
+	"latitude":32.927,
+	"longitude":-97.092,
+	"webId":"gmps-classic",
+		"reviewUrl":"http://www.classicchevrolet.com/Reviews?SelectedFilters=MAKE=Chevrolet,MODEL=Cruze",
+		"offerUrl":"http://www.classicchevrolet.com/Specials?make=Chevrolet&model=cruze"
+	}
+	]
+}

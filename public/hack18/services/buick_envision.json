@@ -1,0 +1,39 @@
+{
+	"data":[{
+		"dealerName":"Burns Buick",
+		"make":"Buick",
+	"model":"Envision",
+	"latitude":39.895,
+	"longitude":-74.937,
+	"reviewUrl":"https://www.burnsbuickgmc.com/Reviews?SelectedFilters=MAKE%3DBuick,MODEL=Envision",
+      "offerUrl":"https://www.burnsbuickgmc.com/Specials?MAKE=Buick&MODEL=Envision"
+		
+	},
+	{	"dealerName":"bob luegers",
+		"make":"Buick",
+	"model":"Envision",
+	"latitude":38.374,
+	"longitude":-86.942,
+	"reviewUrl":"http://www.bobluegers.com/Reviews?SelectedFilters=MAKE%3DBuick,MODEL=Envision",
+	"offerUrl":"http://www.bobluegers.com/Specials?make=Buick"
+	},
+	{	
+		"dealerName":"bergstrom",
+			"make":"Buick",
+	"model":"Envision",
+	"latitude":44.54,
+	"longitude":88.07,
+	"reviewUrl":"https://www.bergstromgreenbay.com/Reviews?SelectedFilters=MAKE%3DBuick,MODEL=Envision",
+"offerUrl":"https://www.bergstromgreenbay.com/Specials?make=Buick"
+	},
+	{	
+		"dealerName":"stoopsauto",
+		"make":"Buick",
+	"model":"Envision",
+	"latitude":40.219,
+	"longitude":-85.433,
+	"reviewUrl":"https://www.stoopsauto.com/Reviews?SelectedFilters=MAKE%3DBuick,MODEL=Envision",
+	"offerUrl":"https://www.stoopsauto.com/Specials?make=buick&model=envision"
+	}
+	]
+}

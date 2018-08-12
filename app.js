@@ -10,7 +10,6 @@ var Log = require('log'),
     log = new Log('debug');
 var port = process.env.PORT || 3001;
 var numberPlatesLocalData = {};
-//var numberPlatesLocalDataClient = {};
 var isCarInCamera = false;
 var latestCameraBase64Data = {plate:"",base64:""}; //hold latest camera image
 const options ={
@@ -30,6 +29,12 @@ fs.readFile('DB.json', 'utf8', function(err, data) {
 });
 /*END*/
 
+/*UTILS*/
+function jsUcfirst(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+/*UTILS END*/
 
 app.use(express.static(__dirname + "/public"));
 
@@ -39,11 +44,14 @@ app.get('/',function (req,res) {
 });
 
 /*SCRAPPING*/
+
+//OFFERS
 app.get('/offers/:dealer/:make', function(req, res){
     var url = `https://www.${req.params.dealer}.com/Specials?make=${req.params.make}`;
+    console.log(url);
     request(url, function(error, response, html){
         if(!error){
-            var $ = cheerio.load(html);
+            let $ = cheerio.load(html);
 
 
             //remove header
@@ -55,6 +63,9 @@ app.get('/offers/:dealer/:make', function(req, res){
             //remove filters
             $(".horizontal-filters-content").remove();
 
+            //add target blank
+            $("a").attr("target","_blank");
+
             //remove pagination
             //$("section[data-attr='card-specialsPagination-577821b2-fe70-4452-bfad-04dd63a4f97b-a2c4bd9e-4f08-4eb1-9b1a-4e2bb22c1f7b']" ).remove();
 
@@ -64,24 +75,44 @@ app.get('/offers/:dealer/:make', function(req, res){
     })
 
 });
+
+
+//REVIEWS
+app.get('/reviews/:dealer/:make/:model/', function(req, res){
+    var url = `http://www.${req.params.dealer}.com/Reviews?SelectedFilters=MAKE%3D${jsUcfirst(req.params.make)}%2CMODEL%3D${jsUcfirst(req.params.model)}`;
+    // https://www.${req.params.dealer}.com/Reviews?SelectedFilters=MAKE%3D${req.params.make}%2CMODEL%3D${res.params.model}
+    console.log(url);
+    request(url, function(error, response, html){
+        if(!error){
+            let $ = cheerio.load(html);
+
+            //remove header
+            $("header").remove();
+
+            //remove footer
+            $("footer").remove();
+
+            //remove filters
+            $(".horizontal-filters-content").remove();
+            $("section[data-origin-name='ReviewPagination-221546e5-f946-427c-b70f-1c61d6539af4']").remove();
+
+            //add target blank
+            $("a").attr("target","_blank");
+
+            //remove pagination
+            //$("section[data-attr='card-specialsPagination-577821b2-fe70-4452-bfad-04dd63a4f97b-a2c4bd9e-4f08-4eb1-9b1a-4e2bb22c1f7b']" ).remove();
+
+            $("form[class='filters interceptible submittable']").remove();
+
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end($.html());
+        }
+    })
+});
+
 /*SCRAPPING END*/
 
 io.on('connection',function (socket) {
-
-
-
-    /*UTILS*/
-    const filterOBJ = function( obj, predicate) {
-        var result = {}, key;
-        for (key in obj) {
-            if (obj.hasOwnProperty(key) && predicate(obj[key])) {
-                result[key] = obj[key];
-            }
-        }
-
-        return result;
-    };
-    /*UTILS ENDS*/
 
 /*FUNCTIONS*/
     function writeImageFile(tempImageName,data){
@@ -192,6 +223,14 @@ io.on('connection',function (socket) {
         });
     }
     /*FUNCTIONS ENDS*/
+
+
+    /*GOOGLE MAP*/
+    socket.on('setMapData',function (mapdata) {
+        console.log("receiving");
+        socket.emit('getMapData',mapdata);
+    });
+    /*GOOGLE MAP END*/
 
     /*INIT*/
     openalpr.Start(null, null, 10, true,"us");//config, runtime, count, start_queue, region

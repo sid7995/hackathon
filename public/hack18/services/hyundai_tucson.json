@@ -1,0 +1,39 @@
+{
+	"data":[{
+		"dealerName":"Porter Hyundai",
+		"make":"Hyundai",
+		"model":"Tucson",
+		"latitude": 39.687,
+		"longitude": -75.738,
+		"reviewUrl":"http://www.piazzahyundaipottstown.com/reviews?make=Hyundai&model=Tucson",
+		"offerUrl":"https://www.porterhyundai.com/Specials?make=hyundai&model=tucson"
+		
+	},
+	{	"dealerName":"Piazza Hyundai",
+		"make":"Hyundai",
+		"model":"Tucson",
+		"latitude": 40.2185396,
+		"longitude": -75.5475146,
+		"reviewUrl":"http://www.piazzahyundaipottstown.com/Reviews?make=Hyundai&model=Tucson",
+		"offerUrl":"http://www.piazzahyundaipottstown.com/Specials?make=Hyundai&model=Tucson"
+	},
+	{	
+		"dealerName":"Hyundai Augustin",
+		"make":"Hyundai",
+		"model":"Tucson",
+		"latitude": 29.841,
+		"longitude": -81.322,
+		"reviewUrl":"http://www.piazzahyundaipottstown.com/Reviews?make=Hyundai&model=Tucson",
+		"offerUrl":"https://www.hyundaiofstaugustine.com/Specials?make=hyundai&model=tucson"
+	},
+	{	
+		"dealerName":"Hyundai Darcy",
+		"make":"Hyundai",
+		"model":"Tucson",
+		"latitude": 41.522,
+		"longitude": -88.144,
+		"reviewUrl":"http://www.piazzahyundaipottstown.com/Reviews?make=Hyundai&model=Tucson",
+		"offerUrl":"https://www.darcyhyundai.com/Specials?make=hyundai&model=tucson"
+	}
+	]
+}
